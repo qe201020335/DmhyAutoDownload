@@ -4,7 +4,7 @@ namespace DmhyAutoDownload;
 
 public class ConfigManager
 {
-    internal static readonly ConfigManager Instance = new ConfigManager();
+    internal static readonly ConfigManager Instance = new ();
     private const string ConfPath = @"./Config/DmhyAutoDownload.json";
     private const string ConfDir = @"./Config";
 

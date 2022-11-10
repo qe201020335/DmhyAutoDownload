@@ -8,6 +8,9 @@ public class Configuration
 
     [JsonProperty("Bangumis")]
     public readonly List<Bangumi> Bangumis = new();
+
+    [JsonProperty("AriaRpcWs")]
+    public string AriaRpcWs = "ws://localhost:6800/jsonrpc";
 }
 
 public class Bangumi
