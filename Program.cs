@@ -8,7 +8,8 @@ internal class Program
         Console.WriteLine("Hello, World!");
         ConfigManager.Instance.InitConfig();
 
-        await BangumiManager.Instance.RefreshAndPush();
+        await BangumiManager.Instance.Test();
+        await DownloadManager.Instance.Test();
         
         
         ConfigManager.Instance.SaveConfig();

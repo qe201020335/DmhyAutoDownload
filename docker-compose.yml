@@ -1,0 +1,9 @@
+version: "3"
+services:
+  dmhy:
+    build: .
+    environment:
+      - RPCADDR=http://host.docker.internal:6800/jsonrpc
+      - ARIATOKEN=
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

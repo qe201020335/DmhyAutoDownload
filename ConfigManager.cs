@@ -35,12 +35,31 @@ public class ConfigManager
             }
 
             _initialized = true;
+
+            FetchEnvVar();
+
             SaveConfig();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
+        }
+    }
+
+    internal void FetchEnvVar()
+    {
+        var addr = Environment.GetEnvironmentVariable("RPCADDR");
+        if (addr != null)
+        {
+            Console.WriteLine($"RPCADDR: {addr}");
+            Configuration.Instance.AriaRpc = addr;
+        }
+        var token = Environment.GetEnvironmentVariable("ARIATOKEN");
+        if (token != null)
+        {
+            Console.WriteLine($"ARIATOKEN: {token}");
+            Configuration.Instance.AriaToken = token;
         }
     }
 
