@@ -12,12 +12,14 @@ public class BangumiManager
     private readonly Configuration _config;
     private readonly DownloadManager _downloadManager;
     private readonly ILogger<BangumiManager> _logger;
+    private readonly ConfigManager _configManager;
 
-    public BangumiManager(ILogger<BangumiManager> logger, Configuration configuration, DownloadManager downloadManager)
+    public BangumiManager(ILogger<BangumiManager> logger, Configuration configuration, DownloadManager downloadManager, ConfigManager configManager)
     {
         _logger = logger;
         _config = configuration;
         _downloadManager = downloadManager;
+        _configManager = configManager;
     }
 
     internal async Task RefreshAndPush()
@@ -26,6 +28,7 @@ public class BangumiManager
         {
             await RefreshAndPush(bangumi);
         }
+        _configManager.SaveConfig();
     }
 
     internal async Task RefreshAndPush(Bangumi bangumi)

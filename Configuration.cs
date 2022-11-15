@@ -4,9 +4,6 @@ namespace DmhyAutoDownload;
 
 public class Configuration
 {
-    [JsonProperty("Bangumis")]
-    public readonly List<Bangumi> Bangumis = new();
-
     [JsonProperty("AriaRpc")]
     public string AriaRpc = "http://localhost:6800/jsonrpc";
     
@@ -14,10 +11,13 @@ public class Configuration
     public string AriaToken = "";
 
     [JsonProperty("RefreshDelay")]
-    public int RefreshDelay = 86400;
+    public int RefreshDelay = 21600;
 
     [JsonProperty("ListenOn")]
     public string ListenOn = "http://localhost:18880";
+    
+    [JsonProperty("Bangumis")]
+    public readonly List<Bangumi> Bangumis = new();
 }
 
 public class Bangumi
