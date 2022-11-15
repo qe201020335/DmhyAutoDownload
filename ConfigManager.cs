@@ -1,20 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
 
 namespace DmhyAutoDownload;
 
 public class ConfigManager
 {
-    internal static readonly ConfigManager Instance = new ();
     private const string ConfPath = @"./Config/DmhyAutoDownload.json";
     private const string ConfDir = @"./Config";
+    private bool _initialized;
 
-    private bool _initialized = false;
-    private ConfigManager()
-    {
-        
-    }
+    private Configuration? _config;
+    internal Configuration Config => _config ?? InitConfig();
 
-    internal void InitConfig()
+    internal Configuration InitConfig()
     {
         try
         {
@@ -22,11 +20,11 @@ public class ConfigManager
             {
                 using var file = File.OpenText(ConfPath);
                 var serializer = new JsonSerializer();
-                Configuration.Instance = (Configuration?)serializer.Deserialize(file, typeof(Configuration)) ?? throw new Exception();
+                _config = (Configuration?)serializer.Deserialize(file, typeof(Configuration)) ?? throw new Exception();
             }
             else
             {
-                Configuration.Instance = new Configuration();
+                _config = new Configuration();
 
                 if (!Directory.Exists(ConfDir))
                 {
@@ -34,11 +32,10 @@ public class ConfigManager
                 }
             }
 
-            _initialized = true;
-
             FetchEnvVar();
-
             SaveConfig();
+            _initialized = true;
+            return Config;
         }
         catch (Exception e)
         {
@@ -49,31 +46,30 @@ public class ConfigManager
 
     internal void FetchEnvVar()
     {
+        if (_config == null) return;
         var addr = Environment.GetEnvironmentVariable("RPCADDR");
         if (addr != null)
         {
             Console.WriteLine($"RPCADDR: {addr}");
-            Configuration.Instance.AriaRpc = addr;
+            _config.AriaRpc = addr;
         }
+
         var token = Environment.GetEnvironmentVariable("ARIATOKEN");
         if (token != null)
         {
             Console.WriteLine($"ARIATOKEN: {token}");
-            Configuration.Instance.AriaToken = token;
+            _config.AriaToken = token;
         }
     }
 
     internal void SaveConfig()
     {
-        if (!_initialized)
-        {
-            return;
-        }
+        if (_config == null) return;
         try
         {
             using var file = File.CreateText(ConfPath);
             var serializer = new JsonSerializer();
-            serializer.Serialize(file, Configuration.Instance);
+            serializer.Serialize(file, _config);
         }
         catch (Exception e)
         {

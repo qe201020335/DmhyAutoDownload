@@ -1,24 +1,28 @@
 ﻿using System.Xml;
 using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
+using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload;
 
 public class BangumiManager
 {
-
-    internal static readonly BangumiManager Instance = new ();
     const string QUERY_URL = @"http://share.dmhy.org/topics/rss/rss.xml?keyword=";
-    
-    private DownloadManager DownloadManager => DownloadManager.Instance;
-    private BangumiManager()
+
+    private readonly Configuration _config;
+    private readonly DownloadManager _downloadManager;
+    private readonly ILogger<BangumiManager> _logger;
+
+    public BangumiManager(ILogger<BangumiManager> logger, Configuration configuration, DownloadManager downloadManager)
     {
-        
+        _logger = logger;
+        _config = configuration;
+        _downloadManager = downloadManager;
     }
 
     internal async Task RefreshAndPush()
     {
-        foreach (var bangumi in Configuration.Instance.Bangumis)
+        foreach (var bangumi in _config.Bangumis)
         {
             await RefreshAndPush(bangumi);
         }
@@ -76,8 +80,7 @@ public class BangumiManager
     {
         if (bangumi.DownloadedEps.Contains(magnet.ToString())) return;
 
-        await DownloadManager.Push(magnet);
+        await _downloadManager.Push(magnet);
         // bangumi.DownloadedEps.Add(magnet.ToString());
-        
     }
 }

@@ -4,8 +4,6 @@ namespace DmhyAutoDownload;
 
 public class Configuration
 {
-    [JsonIgnore] public static Configuration Instance;
-
     [JsonProperty("Bangumis")]
     public readonly List<Bangumi> Bangumis = new();
 
@@ -17,6 +15,9 @@ public class Configuration
 
     [JsonProperty("RefreshDelay")]
     public int RefreshDelay = 86400;
+
+    [JsonProperty("ListenOn")]
+    public string ListenOn = "http://localhost:18880";
 }
 
 public class Bangumi

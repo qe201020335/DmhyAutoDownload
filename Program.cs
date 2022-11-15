@@ -3,32 +3,29 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
 namespace DmhyAutoDownload;
+
 internal class Program
 {
-    private static async Task Test()
-    {
-        Console.WriteLine("Hello, World!");
-
-        await BangumiManager.Instance.Test();
-        await DownloadManager.Instance.Test();
-        
-        
-    }
     public static void Main(string[] args)
     {
-        ConfigManager.Instance.InitConfig();
-
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-
-        builder.Services.AddControllers();
+        var services = builder.Services;
+        services.AddControllers();
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-        builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        services.AddEndpointsApiExplorer();
+        services.AddSwaggerGen();
 
-        builder.Services.AddHostedService<RefresherService>();
-
+        // DI
+        var configManager = new ConfigManager();
+        services.AddSingleton(configManager).AddSingleton(configManager.InitConfig())
+            .AddSingleton<DownloadManager, DownloadManager>()
+            .AddSingleton<BangumiManager, BangumiManager>();
+        
+        // extra services
+        services.AddHostedService<RefresherService>();
+        
         var app = builder.Build();
 
         // Configure the HTTP request pipeline.
@@ -39,14 +36,18 @@ internal class Program
         }
 
         app.UseHttpsRedirection();
-
         app.UseAuthorization();
-
         app.MapControllers();
-        
-        app.Run();
-        
-        ConfigManager.Instance.SaveConfig();
 
+        string url;
+        using (var serviceScope = app.Services.CreateScope())
+        {
+            var serviceProvider = serviceScope.ServiceProvider;
+
+            var config = serviceProvider.GetRequiredService<ConfigManager>();
+            url = config.Config.ListenOn;
+        }
+
+        app.Run(url);
     }
 }

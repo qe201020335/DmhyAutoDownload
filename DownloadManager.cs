@@ -1,16 +1,21 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json.Linq;
 
 namespace DmhyAutoDownload;
 
 public class DownloadManager
 {
-    internal static readonly DownloadManager Instance = new();
-    private string RpcAddress => Configuration.Instance.AriaRpc;
-    private string AriaToken => Configuration.Instance.AriaToken;
-    
+    private string RpcAddress => _config.AriaRpc;
+    private string AriaToken => _config.AriaToken;
     private readonly HttpClient _client = new();
-    private DownloadManager()
+
+    private readonly ILogger<DownloadManager> _logger;
+    private readonly Configuration _config;
+
+    public DownloadManager(ILogger<DownloadManager> logger, Configuration config)
     {
+        _logger = logger;
+        _config = config;
     }
 
     internal async Task Push(Uri uri)
@@ -32,7 +37,7 @@ public class DownloadManager
             new JProperty("id", "1234"),
             new JProperty("method", method));
 
-        var parameter = requireToken ? new List<object>{$"token:{AriaToken}"} : new List<object>();
+        var parameter = requireToken ? new List<object> { $"token:{AriaToken}" } : new List<object>();
         parameter.AddRange(param);
         if (parameter.Count > 0)
         {

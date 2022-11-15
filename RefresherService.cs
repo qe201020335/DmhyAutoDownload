@@ -6,21 +6,25 @@ namespace DmhyAutoDownload;
 public class RefresherService : IHostedService, IDisposable
 {
     private readonly ILogger<RefresherService> _logger;
+    private readonly Configuration _config;
+    private readonly BangumiManager _bangumiManager;
+
     private Timer? _timer;
     private Task? _refreshTask;
     private CancellationTokenSource? _tokenSource;
-    
-    public RefresherService(ILogger<RefresherService> logger)
+
+    public RefresherService(ILogger<RefresherService> logger, Configuration configuration,
+        BangumiManager bangumiManager)
     {
         _logger = logger;
+        _config = configuration;
+        _bangumiManager = bangumiManager;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("RefresherService starting");
-
-        _timer = new Timer(DoWork, null, TimeSpan.Zero, TimeSpan.FromSeconds(Configuration.Instance.RefreshDelay));
-
+        _timer = new Timer(DoWork, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(_config.RefreshDelay));
         return Task.CompletedTask;
     }
 
@@ -42,18 +46,13 @@ public class RefresherService : IHostedService, IDisposable
 
         _logger.LogInformation("RefresherService begin refresh");
         _tokenSource = new CancellationTokenSource();
-        _refreshTask = Task.Factory.StartNew(() =>
-        {
-            BangumiManager.Instance.Test().Wait(_tokenSource.Token);
-        });
+        _refreshTask = Task.Factory.StartNew(() => { _bangumiManager.Test().Wait(_tokenSource.Token); });
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("RefresherService stopping");
-
         _timer?.Change(Timeout.Infinite, 0);
-
         return Task.CompletedTask;
     }
 
