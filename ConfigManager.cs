@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace DmhyAutoDownload;
@@ -11,6 +11,12 @@ public class ConfigManager
 
     private Configuration? _config;
     internal Configuration Config => _config ?? InitConfig();
+    private readonly ILogger<ConfigManager> _logger;
+
+    public ConfigManager(ILogger<ConfigManager> logger)
+    {
+        _logger = logger;
+    }
 
     internal Configuration InitConfig()
     {
@@ -39,7 +45,8 @@ public class ConfigManager
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
+            _logger.LogError("Cannot initialize configuration: {Message}", e.Message);
+            _logger.LogDebug("{Ex}", e);
             throw;
         }
     }
@@ -50,20 +57,21 @@ public class ConfigManager
         var addr = Environment.GetEnvironmentVariable("RPCADDR");
         if (addr != null)
         {
-            Console.WriteLine($"RPCADDR: {addr}");
+            _logger.LogInformation("ENV | RPC Address: {Addr}", addr);
             _config.AriaRpc = addr;
         }
 
         var token = Environment.GetEnvironmentVariable("ARIATOKEN");
         if (token != null)
         {
-            Console.WriteLine($"ARIATOKEN: {token}");
+            _logger.LogInformation("ENV | RPC Token: {Token}", token);
             _config.AriaToken = token;
         }
     }
 
     internal void SaveConfig()
     {
+        _logger.LogInformation("Saving config");
         if (_config == null) return;
         try
         {
@@ -73,8 +81,8 @@ public class ConfigManager
         }
         catch (Exception e)
         {
-            Console.WriteLine(e);
-            throw;
+            _logger.LogCritical("Error saving config: {Message}", e.Message);
+            _logger.LogDebug("{Ex}", e);
         }
     }
 }

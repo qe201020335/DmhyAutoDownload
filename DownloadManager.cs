@@ -47,6 +47,6 @@ public class DownloadManager
 
         var res = await _client.PostAsync(RpcAddress, new StringContent(req.ToString()));
         res.EnsureSuccessStatusCode();
-        Console.WriteLine(await res.Content.ReadAsStringAsync());
+        _logger.LogTrace("{Res}", await res.Content.ReadAsStringAsync());
     }
 }

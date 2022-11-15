@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload;
 
@@ -18,7 +19,7 @@ internal class Program
         services.AddSwaggerGen();
 
         // DI
-        var configManager = new ConfigManager();
+        var configManager = new ConfigManager(new Logger<ConfigManager>(LoggerFactory.Create(config=> config.AddConsole())));
         services.AddSingleton(configManager).AddSingleton(configManager.InitConfig())
             .AddSingleton<DownloadManager, DownloadManager>()
             .AddSingleton<BangumiManager, BangumiManager>();
@@ -44,9 +45,17 @@ internal class Program
         {
             var serviceProvider = serviceScope.ServiceProvider;
 
-            var config = serviceProvider.GetRequiredService<ConfigManager>();
-            url = config.Config.ListenOn;
+            var config = serviceProvider.GetRequiredService<Configuration>();
+            url = config.ListenOn;
         }
+
+        app.Lifetime.ApplicationStopping.Register(() =>
+        {
+            // save config when shutting down
+            using var serviceScope = app.Services.CreateScope();
+            var serviceProvider = serviceScope.ServiceProvider;
+            serviceProvider.GetRequiredService<ConfigManager>().SaveConfig();
+        });
 
         app.Run(url);
     }

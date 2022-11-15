@@ -24,11 +24,11 @@ public class RefresherService : IHostedService, IDisposable
     public Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("RefresherService starting");
-        _timer = new Timer(DoWork, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(_config.RefreshDelay));
+        _timer = new Timer(Refresh, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(_config.RefreshDelay));
         return Task.CompletedTask;
     }
 
-    private void DoWork(object? state)
+    private void Refresh(object? state)
     {
         try
         {
@@ -40,7 +40,8 @@ public class RefresherService : IHostedService, IDisposable
         {
             if (e is not AggregateException && e is not ObjectDisposedException)
             {
-                Console.WriteLine(e);
+                _logger.LogWarning("Failed to clean up previous refresh attempt: {Message}", e.Message);
+                _logger.LogDebug("{Ex}", e);
             }
         }
 
