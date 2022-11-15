@@ -14,6 +14,9 @@ public class Configuration
     
     [JsonProperty("AriaToken")]
     public string AriaToken = "";
+
+    [JsonProperty("RefreshDelay")]
+    public int RefreshDelay = 86400;
 }
 
 public class Bangumi
