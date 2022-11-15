@@ -20,7 +20,7 @@ public class DownloadManager
 
     internal async Task Push(Uri uri)
     {
-        // todo push aria rpc
+        await Push("aria2.addUri", true, new List<Uri> { uri });
     }
 
     internal async Task Test()
@@ -39,10 +39,10 @@ public class DownloadManager
 
         var parameter = requireToken ? new List<object> { $"token:{AriaToken}" } : new List<object>();
         parameter.AddRange(param);
+        var aaa = JArray.FromObject(parameter);
         if (parameter.Count > 0)
         {
-            var aaa = new JProperty("params", parameter);
-            req.Add(aaa);
+            req["params"] = aaa;
         }
 
         var res = await _client.PostAsync(RpcAddress, new StringContent(req.ToString()));

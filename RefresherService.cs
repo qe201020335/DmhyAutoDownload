@@ -47,7 +47,7 @@ public class RefresherService : IHostedService, IDisposable
 
         _logger.LogInformation("RefresherService begin refresh");
         _tokenSource = new CancellationTokenSource();
-        _refreshTask = Task.Factory.StartNew(() => { _bangumiManager.Test().Wait(_tokenSource.Token); });
+        _refreshTask = Task.Factory.StartNew(() => { _bangumiManager.RefreshAndPush().Wait(_tokenSource.Token); });
     }
 
     public Task StopAsync(CancellationToken stoppingToken)

@@ -87,7 +87,7 @@ public class BangumiManager
         try
         {
             await _downloadManager.Push(magnet);
-            // bangumi.DownloadedEps.Add(magnet.ToString());
+            bangumi.DownloadedEps.Add(magnet.ToString());
         }
         catch (Exception e)
         {
