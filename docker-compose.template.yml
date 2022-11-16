@@ -7,5 +7,7 @@ services:
       - ARIATOKEN=
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    volumes:
+      - $PWD:/app/Config
     ports:
       - "80:18880"
