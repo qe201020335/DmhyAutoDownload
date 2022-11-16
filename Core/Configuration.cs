@@ -20,19 +20,19 @@ public class Configuration
 
 public class Bangumi
 {
-    [JsonProperty("Name")]
+    [JsonProperty("Name", Required = Required.Always)]
     public string Name { get; set; } = "";
     
-    [JsonProperty("Regex")]
+    [JsonProperty("Regex", Required = Required.Always)]
     public string Regex { get; set; } = "";
 
-    [JsonProperty("RegexGroupIndex")]
+    [JsonProperty("RegexGroupIndex", Required = Required.DisallowNull)]
     public int RegexGroupIndex { get; set; } = 0;
 
-    [JsonProperty("QueryKeyWord")]
+    [JsonProperty("QueryKeyWord", Required = Required.Always)]
     public string QueryKeyWord { get; set; } = "";
 
-    [JsonProperty("DownloadedEps")]
+    [JsonProperty("DownloadedEps", Required = Required.DisallowNull)]
     private HashSet<string> DownloadedEps { get; set; } = new();
 
     public bool HadDownloaded(string link)

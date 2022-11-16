@@ -28,7 +28,7 @@ public class RefresherService : IHostedService, IDisposable
         return Task.CompletedTask;
     }
 
-    private void Refresh(object? state)
+    internal void Refresh(object? state)
     {
         try
         {

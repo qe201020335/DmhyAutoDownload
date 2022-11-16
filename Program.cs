@@ -19,6 +19,7 @@ internal static class Program
 
         services.AddCoreDependencyGroup().RegisterCoreService();
         
+        services.AddControllers().AddNewtonsoftJson();
         
         var app = builder.Build().RegisterCoreAppEvents();
 
@@ -29,7 +30,7 @@ internal static class Program
             app.UseSwaggerUI();
         }
 
-        app.UseHttpsRedirection();
+        // app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
 

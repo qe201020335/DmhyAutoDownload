@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="6.0.11" />
       <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.0" />
       <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="7.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
@@ -17,8 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Web\Controller" />
-      <Folder Include="Web\DataModel" />
+      <Folder Include="Web\Controllers" />
     </ItemGroup>
 
 </Project>

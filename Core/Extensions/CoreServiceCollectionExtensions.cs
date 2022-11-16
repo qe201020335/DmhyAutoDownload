@@ -13,7 +13,8 @@ public static class CoreServiceCollectionExtensions
             new ConfigManager(new Logger<ConfigManager>(LoggerFactory.Create(config => config.AddConsole())));
         services.AddSingleton(configManager).AddSingleton(configManager.InitConfig())
             .AddSingleton<DownloadManager, DownloadManager>()
-            .AddSingleton<BangumiManager, BangumiManager>();
+            .AddSingleton<BangumiManager, BangumiManager>()
+            .AddSingleton<RefresherService, RefresherService>();
 
         return services;
     }
