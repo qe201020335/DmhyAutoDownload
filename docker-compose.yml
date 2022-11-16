@@ -5,5 +5,8 @@ services:
     environment:
       - RPCADDR=http://host.docker.internal:6800/jsonrpc
       - ARIATOKEN=
+      - LISTEN=http://localhost:18880
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    ports:
+      - "18880:18880"

@@ -67,6 +67,13 @@ public class ConfigManager
             _logger.LogInformation("ENV | RPC Token: {Token}", token);
             _config.AriaToken = token;
         }
+
+        var listen = Environment.GetEnvironmentVariable("LISTEN");
+        if (listen != null)
+        {
+            _logger.LogInformation("ENV | HTTP Listen: {Listen}", listen);
+            _config.ListenOn = listen;
+        }
     }
 
     internal void SaveConfig()
