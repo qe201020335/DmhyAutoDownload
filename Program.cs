@@ -2,11 +2,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
-namespace DmhyAutoDownload.Core.Service;
+namespace DmhyAutoDownload;
 
-internal class Program
+internal static class Program
 {
     public static void Main(string[] args)
     {
