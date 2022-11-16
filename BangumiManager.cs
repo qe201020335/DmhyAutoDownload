@@ -60,7 +60,7 @@ public class BangumiManager
                     _logger.LogWarning("{Id} {Title}: Magnet Link Not Found!",
                         match.Groups[bangumi.RegexGroupIndex + 1], item.Title.Text);
                 }
-                else if (!bangumi.DownloadedEps.Contains(magnet.AbsoluteUri))
+                else if (!bangumi.HadDownloaded(magnet.AbsoluteUri))
                 {
                     _logger.LogInformation("{Id} {Title}: {Magnetic}", match.Groups[bangumi.RegexGroupIndex + 1],
                         item.Title.Text, magnet.AbsoluteUri.Substring(0, 50) + "...");
@@ -85,12 +85,12 @@ public class BangumiManager
 
     private async Task Push(Bangumi bangumi, Uri magnet)
     {
-        if (bangumi.DownloadedEps.Contains(magnet.ToString())) return;
+        if (bangumi.HadDownloaded(magnet.AbsoluteUri)) return;
 
         try
         {
             await _downloadManager.Push(magnet);
-            bangumi.DownloadedEps.Add(magnet.ToString());
+            bangumi.AddDownloaded(magnet.ToString());
         }
         catch (Exception e)
         {

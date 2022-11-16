@@ -32,6 +32,17 @@ public class Bangumi
     public string QueryKeyWord { get; set; } = "";
 
     [JsonProperty("DownloadedEps")]
-    public HashSet<string> DownloadedEps { get; set; } = new();
+    private HashSet<string> DownloadedEps { get; set; } = new();
+
+    public bool HadDownloaded(string link)
+    {
+        return string.IsNullOrWhiteSpace(link) || DownloadedEps.Contains(Utils.GetHashString(link));
+    }
+
+    public void AddDownloaded(string link)
+    {
+        if (string.IsNullOrWhiteSpace(link)) return;
+        DownloadedEps.Add(Utils.GetHashString(link));
+    }
 
 }
