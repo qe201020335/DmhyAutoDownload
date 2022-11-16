@@ -10,4 +10,4 @@ services:
     volumes:
       - $PWD:/app/Config
     ports:
-      - "80:18880"
+      - "18880:80"
