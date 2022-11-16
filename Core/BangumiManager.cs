@@ -1,9 +1,9 @@
-﻿using System.Xml;
-using System.ServiceModel.Syndication;
+﻿using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
+using System.Xml;
 using Microsoft.Extensions.Logging;
 
-namespace DmhyAutoDownload;
+namespace DmhyAutoDownload.Core;
 
 public class BangumiManager
 {

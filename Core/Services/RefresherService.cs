@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DmhyAutoDownload;
+namespace DmhyAutoDownload.Core.Services;
 
 public class RefresherService : IHostedService, IDisposable
 {

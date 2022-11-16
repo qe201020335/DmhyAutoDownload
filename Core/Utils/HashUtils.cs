@@ -1,9 +1,9 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace DmhyAutoDownload;
+namespace DmhyAutoDownload.Core.Utils;
 
-public static class Utils
+public static class HashUtils
 {
     public static byte[] GetHash(string inputString)
     {

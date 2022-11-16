@@ -16,4 +16,9 @@
       <PackageReference Include="System.ServiceModel.Syndication" Version="7.0.0" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Web\Controller" />
+      <Folder Include="Web\DataModel" />
+    </ItemGroup>
+
 </Project>

@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
+using DmhyAutoDownload.Core.Utils;
 
-namespace DmhyAutoDownload;
+namespace DmhyAutoDownload.Core;
 
 public class Configuration
 {
@@ -36,13 +37,13 @@ public class Bangumi
 
     public bool HadDownloaded(string link)
     {
-        return string.IsNullOrWhiteSpace(link) || DownloadedEps.Contains(Utils.GetHashString(link));
+        return string.IsNullOrWhiteSpace(link) || DownloadedEps.Contains(HashUtils.GetHashString(link));
     }
 
     public void AddDownloaded(string link)
     {
         if (string.IsNullOrWhiteSpace(link)) return;
-        DownloadedEps.Add(Utils.GetHashString(link));
+        DownloadedEps.Add(HashUtils.GetHashString(link));
     }
 
 }

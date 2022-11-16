@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
-namespace DmhyAutoDownload;
+namespace DmhyAutoDownload.Core;
 
 public class ConfigManager
 {

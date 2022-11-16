@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using DmhyAutoDownload.Core.Extensions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
-namespace DmhyAutoDownload;
+namespace DmhyAutoDownload.Core.Service;
 
 internal class Program
 {
@@ -14,20 +15,13 @@ internal class Program
         // Add services to the container.
         var services = builder.Services;
         services.AddControllers();
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
-        // DI
-        var configManager = new ConfigManager(new Logger<ConfigManager>(LoggerFactory.Create(config=> config.AddConsole())));
-        services.AddSingleton(configManager).AddSingleton(configManager.InitConfig())
-            .AddSingleton<DownloadManager, DownloadManager>()
-            .AddSingleton<BangumiManager, BangumiManager>();
+        services.AddCoreDependencyGroup().RegisterCoreService();
         
-        // extra services
-        services.AddHostedService<RefresherService>();
         
-        var app = builder.Build();
+        var app = builder.Build().RegisterCoreAppEvents();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
@@ -39,14 +33,6 @@ internal class Program
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
-
-        app.Lifetime.ApplicationStopping.Register(() =>
-        {
-            // save config when shutting down
-            using var serviceScope = app.Services.CreateScope();
-            var serviceProvider = serviceScope.ServiceProvider;
-            serviceProvider.GetRequiredService<ConfigManager>().SaveConfig();
-        });
 
         app.Run();
     }
