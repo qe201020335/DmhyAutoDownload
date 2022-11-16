@@ -13,9 +13,6 @@ public class Configuration
     [JsonProperty("RefreshDelay")]
     public int RefreshDelay = 21600;
 
-    [JsonProperty("ListenOn")]
-    public string ListenOn = "http://localhost:18880";
-    
     [JsonProperty("Bangumis")]
     public readonly List<Bangumi> Bangumis = new();
 }

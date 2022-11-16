@@ -40,15 +40,6 @@ internal class Program
         app.UseAuthorization();
         app.MapControllers();
 
-        string url;
-        using (var serviceScope = app.Services.CreateScope())
-        {
-            var serviceProvider = serviceScope.ServiceProvider;
-
-            var config = serviceProvider.GetRequiredService<Configuration>();
-            url = config.ListenOn;
-        }
-
         app.Lifetime.ApplicationStopping.Register(() =>
         {
             // save config when shutting down
@@ -57,6 +48,6 @@ internal class Program
             serviceProvider.GetRequiredService<ConfigManager>().SaveConfig();
         });
 
-        app.Run(url);
+        app.Run();
     }
 }
