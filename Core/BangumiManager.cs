@@ -51,7 +51,9 @@ public class BangumiManager
 
         foreach (var item in feed.Items)
         {
+            _logger.LogDebug("{Title}", item.Title.Text);
             var match = regex.Match(item.Title.Text);
+            _logger.LogDebug("{Match}", match.Success);
             if (match.Success)
             {
                 var magnet = item.Links.FirstOrDefault(link => link.Uri.Scheme.Contains("magnet"))?.Uri;

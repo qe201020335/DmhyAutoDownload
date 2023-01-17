@@ -20,6 +20,7 @@ public class ConfigManager
 
     internal Configuration InitConfig()
     {
+        if (_initialized && _config != null) return _config;
         try
         {
             if (File.Exists(ConfPath))
