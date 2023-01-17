@@ -11,3 +11,4 @@ services:
       - $PWD:/app/Config
     ports:
       - "18880:80"
+    restart: unless-stopped
