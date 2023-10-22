@@ -34,6 +34,9 @@ public class Bangumi
 
     [JsonProperty("DownloadedEps", Required = Required.DisallowNull)]
     private HashSet<string> DownloadedEps { get; set; } = new();
+    
+    [JsonProperty("Finished", Required = Required.DisallowNull)]
+    public bool Finished { get; set; } = false;
 
     public bool HadDownloaded(string link)
     {

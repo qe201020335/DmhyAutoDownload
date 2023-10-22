@@ -22,12 +22,16 @@ public class BangumiManager
         _configManager = configManager;
     }
 
-    internal async Task RefreshAndPush()
+    internal async Task RefreshAndPush(bool skipFinished = true)
     {
         foreach (var bangumi in _config.Bangumis)
         {
-            await RefreshAndPush(bangumi);
+            if (!skipFinished || !bangumi.Finished)
+            {
+                await RefreshAndPush(bangumi);
+            }
         }
+
         _configManager.SaveConfig();
     }
 

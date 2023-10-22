@@ -7,7 +7,7 @@ namespace DmhyAutoDownload.Core.Extensions;
 
 public static class CoreServiceCollectionExtensions
 {
-    public static IServiceCollection RegisterCoreService(this IServiceCollection services)
+    public static IServiceCollection AddCoreDependencyGroup(this IServiceCollection services)
     {
         var configManager =
             new ConfigManager(new Logger<ConfigManager>(LoggerFactory.Create(config => config.AddConsole())));
@@ -19,7 +19,7 @@ public static class CoreServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCoreDependencyGroup(this IServiceCollection services)
+    public static IServiceCollection RegisterCoreService(this IServiceCollection services)
     {
         services.AddHostedService<RefresherService>();
         return services;

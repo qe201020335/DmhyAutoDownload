@@ -11,11 +11,13 @@ public class BangumiController : ControllerBase
 {
     private readonly ILogger<BangumiController> _logger;
     private readonly Configuration _config;
+    private readonly ConfigManager _configManager;
 
-    public BangumiController(ILogger<BangumiController> logger, Configuration configuration)
+    public BangumiController(ILogger<BangumiController> logger, ConfigManager configManager)
     {
         _logger = logger;
-        _config = configuration;
+        _configManager = configManager;
+        _config = configManager.Config;
     }
 
     [HttpGet("all/")]
@@ -51,5 +53,31 @@ public class BangumiController : ControllerBase
     public void Refresh([FromServices] RefresherService refresherService)
     {
         refresherService.Refresh(null);
+    }
+    
+    [HttpPost("markFinished/{name}/")]
+    public IActionResult MarkFinished(string name, [FromQuery(Name = "finished")] bool finished = true)
+    {
+        var bangumi = _config.Bangumis.Find(bangumi => bangumi.Name == name);
+        if (bangumi == null)
+        {
+            return NotFound();
+        }
+        bangumi.Finished = finished;
+        _configManager.SaveConfig();
+        return new JsonResult(bangumi);
+    }
+    
+    [HttpDelete("delete/{name}/")]
+    public IActionResult DeleteBangumi(string name)
+    {
+        var bangumi = _config.Bangumis.Find(bangumi => bangumi.Name == name);
+        if (bangumi == null)
+        {
+            return NotFound();
+        }
+        _config.Bangumis.Remove(bangumi);
+        _configManager.SaveConfig();
+        return NoContent();
     }
 }
