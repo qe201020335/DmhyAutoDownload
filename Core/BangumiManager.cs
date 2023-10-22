@@ -24,7 +24,7 @@ public class BangumiManager
 
     internal async Task RefreshAndPush(bool skipFinished = true)
     {
-        foreach (var bangumi in _config.Bangumis)
+        foreach (var bangumi in _config.BangumiList)
         {
             if (!skipFinished || !bangumi.Finished)
             {

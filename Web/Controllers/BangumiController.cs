@@ -21,30 +21,29 @@ public class BangumiController : ControllerBase
     }
 
     [HttpGet("all/")]
-    public IEnumerable<Bangumi> GetAllBangumis()
+    public ICollection<Bangumi> GetAllBangumis()
     {
-        return _config.Bangumis;
+        return _config.BangumiList;
     }
 
-    [HttpGet("get/{Name}/")]
-    public IActionResult GetBangumi(string Name)
+    [HttpGet("get/{name}/")]
+    public IActionResult GetBangumi(string name)
     {
-        var bangumi = _config.Bangumis.Find(bangumi => bangumi.Name == Name);
-        if (bangumi == null)
+        if (_config.Bangumis.TryGetValue(name, out var bangumi))
         {
-            return NotFound();
+            return new JsonResult(bangumi);
         }
-        return new JsonResult(bangumi);
+        return NotFound();
     }
 
     [HttpPost("add/")]
     public IActionResult AddBangumi([FromServices] RefresherService refresherService, Bangumi bangumi)
     {
-        if (_config.Bangumis.Exists(bangumi1 => bangumi1.Name == bangumi.Name))
+        if (_config.Bangumis.ContainsKey(bangumi.Name))
         {
             return BadRequest();
         }
-        _config.Bangumis.Add(bangumi);
+        _config.Bangumis[bangumi.Name] = bangumi;
         refresherService.Refresh(null);
         return Accepted();
     }
@@ -58,26 +57,24 @@ public class BangumiController : ControllerBase
     [HttpPost("markFinished/{name}/")]
     public IActionResult MarkFinished(string name, [FromQuery(Name = "finished")] bool finished = true)
     {
-        var bangumi = _config.Bangumis.Find(bangumi => bangumi.Name == name);
-        if (bangumi == null)
+        if (_config.Bangumis.TryGetValue(name, out var bangumi))
         {
-            return NotFound();
+            bangumi.Finished = finished;
+            _configManager.SaveConfig();
+            return new JsonResult(bangumi);
         }
-        bangumi.Finished = finished;
-        _configManager.SaveConfig();
-        return new JsonResult(bangumi);
+        return NotFound();
     }
     
     [HttpDelete("delete/{name}/")]
     public IActionResult DeleteBangumi(string name)
     {
-        var bangumi = _config.Bangumis.Find(bangumi => bangumi.Name == name);
-        if (bangumi == null)
+        if (_config.Bangumis.ContainsKey(name))
         {
-            return NotFound();
+            _config.Bangumis.Remove(name);
+            _configManager.SaveConfig();
+            return NoContent();
         }
-        _config.Bangumis.Remove(bangumi);
-        _configManager.SaveConfig();
-        return NoContent();
+        return NotFound();
     }
 }

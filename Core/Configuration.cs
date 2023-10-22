@@ -15,7 +15,12 @@ public class Configuration
     public int RefreshDelay = 21600;
 
     [JsonProperty("Bangumis")]
-    public readonly List<Bangumi> Bangumis = new();
+    [JsonConverter(typeof(BangumiMapJsonConverter))]
+    public readonly IDictionary<string, Bangumi> Bangumis = new Dictionary<string, Bangumi>();
+    
+    [JsonIgnore]
+    public ICollection<Bangumi> BangumiList => Bangumis.Values;
+    
 }
 
 public class Bangumi
