@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload", "DmhyAutoDownload.csproj", "{E167A77A-6850-4CDF-8021-9E1B8ED707C5}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload", "DmhyAutoDownload\DmhyAutoDownload.csproj", "{E167A77A-6850-4CDF-8021-9E1B8ED707C5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
