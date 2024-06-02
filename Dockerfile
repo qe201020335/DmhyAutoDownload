@@ -1,18 +1,10 @@
-﻿FROM mcr.microsoft.com/dotnet/runtime:6.0 AS base
-WORKDIR /app
-
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+﻿FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["DmhyAutoDownload.csproj", "./"]
-RUN dotnet restore "DmhyAutoDownload.csproj"
-COPY . .
-WORKDIR "/src"
-RUN dotnet build "DmhyAutoDownload.csproj" -c Release -o /app/build
+COPY . ./
+RUN dotnet restore
+RUN dotnet publish -c Release -o out
 
-FROM build AS publish
-RUN dotnet publish "DmhyAutoDownload.csproj" -c Release -p:PublishReadyToRun=true -r linux-x64 -o /app/publish
-
-FROM base AS final
+FROM mcr.microsoft.com/dotnet/aspnet:6.0
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /src/out .
 ENTRYPOINT ["dotnet", "DmhyAutoDownload.dll"]

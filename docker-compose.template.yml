@@ -5,10 +5,11 @@ services:
     environment:
       - RPCADDR=http://host.docker.internal:6800/jsonrpc
       - ARIATOKEN=
+    command: ["--urls", "http://0.0.0.0:8888"]
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
       - $PWD:/app/Config
     ports:
-      - "18880:80"
+      - "18880:8888"
     restart: unless-stopped
