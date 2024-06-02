@@ -13,19 +13,18 @@ internal static class Program
 
         // Add services to the container.
         var services = builder.Services;
-        services.AddControllers();
+        services.AddControllers().AddNewtonsoftJson();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
 
         services.AddCoreDependencyGroup().RegisterCoreService();
-        
-        services.AddControllers().AddNewtonsoftJson();
         
         var app = builder.Build().RegisterCoreAppEvents();
 
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
+            Console.WriteLine("Development mode");
             app.UseSwagger();
             app.UseSwaggerUI();
         }
