@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload", "DmhyAutoDownload\DmhyAutoDownload.csproj", "{E167A77A-6850-4CDF-8021-9E1B8ED707C5}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload.AriaRPC", "DmhyAutoDownload.AriaRPC\DmhyAutoDownload.AriaRPC.csproj", "{B4DAB007-4420-4736-B6E2-3779B70E3590}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{E167A77A-6850-4CDF-8021-9E1B8ED707C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E167A77A-6850-4CDF-8021-9E1B8ED707C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E167A77A-6850-4CDF-8021-9E1B8ED707C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
