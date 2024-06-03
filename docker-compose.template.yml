@@ -2,7 +2,7 @@ services:
   dmhy:
     build: .
     environment:
-      - RPCADDR=http://host.docker.internal:6800/jsonrpc
+      - RPCADDR=ws://host.docker.internal:6800/jsonrpc
       - ARIATOKEN=
     command: ["--urls", "http://0.0.0.0:8888"]
     extra_hosts:
