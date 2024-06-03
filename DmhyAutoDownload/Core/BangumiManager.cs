@@ -1,6 +1,7 @@
 ﻿using System.ServiceModel.Syndication;
 using System.Text.RegularExpressions;
 using System.Xml;
+using DmhyAutoDownload.Core.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload.Core;
@@ -10,15 +11,15 @@ public class BangumiManager
     const string QUERY_URL = @"http://share.dmhy.org/topics/rss/rss.xml?keyword=";
 
     private readonly Configuration _config;
-    private readonly DownloadManager _downloadManager;
+    private readonly IBangumiDownloader _downloader;
     private readonly ILogger<BangumiManager> _logger;
     private readonly ConfigManager _configManager;
 
-    public BangumiManager(ILogger<BangumiManager> logger, Configuration configuration, DownloadManager downloadManager, ConfigManager configManager)
+    public BangumiManager(ILogger<BangumiManager> logger, Configuration configuration, IBangumiDownloader downloader, ConfigManager configManager)
     {
         _logger = logger;
         _config = configuration;
-        _downloadManager = downloadManager;
+        _downloader = downloader;
         _configManager = configManager;
     }
 
@@ -76,31 +77,18 @@ public class BangumiManager
         }
     }
 
-    internal async Task Test()
-    {
-        var bangumi = new Bangumi
-        {
-            Name = "Chainsaw Man",
-            QueryKeyWord = "电锯人 Chainsaw Man",
-            Regex = @"^.织梦字幕组..+(\d\d)集.+(简日双语|1080).+(简日双语|1080).+$"
-        };
-
-        await RefreshAndPush(bangumi);
-        await _downloadManager.Test();
-    }
-
     private async Task Push(Bangumi bangumi, Uri magnet)
     {
         if (bangumi.HadDownloaded(magnet.AbsoluteUri)) return;
 
         try
         {
-            await _downloadManager.Push(magnet);
+            await _downloader.DownloadAsync(magnet.ToString());
             bangumi.AddDownloaded(magnet.ToString());
         }
         catch (Exception e)
         {
-            _logger.LogCritical("Error pushing to aria: {Message}", e.Message);
+            _logger.LogCritical("Error adding download task: {Message}", e.Message);
             _logger.LogDebug("{Ex}", e);
         }
     }

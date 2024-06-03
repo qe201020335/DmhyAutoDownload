@@ -21,4 +21,8 @@
       <Folder Include="Web\Controllers" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DmhyAutoDownload.AriaRPC\DmhyAutoDownload.AriaRPC.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -1,4 +1,6 @@
-﻿using DmhyAutoDownload.Core.Services;
+﻿using DmhyAutoDownload.Core.Downloaders;
+using DmhyAutoDownload.Core.Interfaces;
+using DmhyAutoDownload.Core.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -9,10 +11,10 @@ public static class CoreServiceCollectionExtensions
 {
     public static IServiceCollection AddCoreDependencyGroup(this IServiceCollection services)
     {
-        var configManager =
-            new ConfigManager(new Logger<ConfigManager>(LoggerFactory.Create(config => config.AddConsole())));
-        services.AddSingleton(configManager).AddSingleton(configManager.Config)
-            .AddSingleton<DownloadManager, DownloadManager>()
+        services
+            .AddSingleton<ConfigManager, ConfigManager>()
+            .AddSingleton<Configuration>(provider => provider.GetRequiredService<ConfigManager>().Config)
+            .AddSingleton<IBangumiDownloader, AriaRPCDownloader>()
             .AddSingleton<BangumiManager, BangumiManager>()
             .AddSingleton<RefresherService, RefresherService>();
 
@@ -21,7 +23,10 @@ public static class CoreServiceCollectionExtensions
 
     public static IServiceCollection RegisterCoreService(this IServiceCollection services)
     {
-        services.AddHostedService<RefresherService>();
+        services
+            .AddHostedService<RefresherService>()
+            .AddHostedService<DownloaderInitializer>();
+        
         return services;
     }
 
