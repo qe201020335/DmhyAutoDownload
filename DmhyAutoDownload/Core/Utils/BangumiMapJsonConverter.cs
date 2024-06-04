@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using DmhyAutoDownload.Core.Data.Models;
+using Newtonsoft.Json;
 
 namespace DmhyAutoDownload.Core.Utils;
 

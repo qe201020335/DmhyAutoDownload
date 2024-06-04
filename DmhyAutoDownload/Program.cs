@@ -1,9 +1,10 @@
 ﻿using DmhyAutoDownload.Core.Configuration;
+using DmhyAutoDownload.Core.Data;
 using DmhyAutoDownload.Core.Extensions;
 using DmhyAutoDownload.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.Extensions.Configuration;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -11,7 +12,7 @@ namespace DmhyAutoDownload;
 
 internal static class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
         // Register configuration sources
@@ -21,6 +22,7 @@ internal static class Program
         var services = builder.Services;
         services
             .BindConfiguration<AutoDownloadConfig>(AutoDownloadConfig.Section)
+            .ConfigureCoreData()
             .AddCoreDependencyGroup()
             .RegisterCoreService()
             .AddEndpointsApiExplorer()
@@ -47,7 +49,14 @@ internal static class Program
         // app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
-
-        app.Run();
+        
+        // Do data migration
+        using (var serviceScope = app.Services.CreateScope())
+        {
+            await using var dbContext = serviceScope.ServiceProvider.GetRequiredService<CoreDbContext>();
+            await dbContext.Database.MigrateAsync();
+        }
+        
+        await app.RunAsync();
     }
 }

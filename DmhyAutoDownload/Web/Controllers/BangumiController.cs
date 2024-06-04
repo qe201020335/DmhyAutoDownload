@@ -1,4 +1,6 @@
 using DmhyAutoDownload.Core;
+using DmhyAutoDownload.Core.Data.Models;
+using DmhyAutoDownload.Core.Interfaces;
 using DmhyAutoDownload.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,18 +14,20 @@ public class BangumiController : ControllerBase
     private readonly ILogger<BangumiController> _logger;
     private readonly Config _config;
     private readonly ConfigManager _configManager;
+    private readonly IBangumiRepository _bangumiRepository;
 
-    public BangumiController(ILogger<BangumiController> logger, ConfigManager configManager)
+    public BangumiController(ILogger<BangumiController> logger, ConfigManager configManager, IBangumiRepository bangumiRepository)
     {
         _logger = logger;
         _configManager = configManager;
         _config = configManager.Config;
+        _bangumiRepository = bangumiRepository;
     }
 
     [HttpGet("all/")]
-    public ICollection<Bangumi> GetAllBangumis()
+    public async Task<ICollection<Bangumi>> GetAllBangumisAsync()
     {
-        return _config.BangumiList;
+        return await _bangumiRepository.GetAllBangumisAsync();
     }
 
     [HttpGet("get/{name}/")]
