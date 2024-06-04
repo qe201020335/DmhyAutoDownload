@@ -13,7 +13,7 @@ public static class CoreServiceCollectionExtensions
     {
         services
             .AddSingleton<ConfigManager, ConfigManager>()
-            .AddSingleton<Configuration>(provider => provider.GetRequiredService<ConfigManager>().Config)
+            .AddSingleton<Config>(provider => provider.GetRequiredService<ConfigManager>().Config)
             .AddSingleton<IBangumiDownloader, AriaRPCDownloader>()
             .AddSingleton<BangumiManager, BangumiManager>()
             .AddSingleton<RefresherService, RefresherService>();

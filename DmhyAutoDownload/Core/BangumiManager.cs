@@ -2,7 +2,9 @@
 using System.Text.RegularExpressions;
 using System.Xml;
 using DmhyAutoDownload.Core.Interfaces;
+using DmhyAutoDownload.Core.Utils;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace DmhyAutoDownload.Core;
 
@@ -10,15 +12,15 @@ public class BangumiManager
 {
     const string QUERY_URL = @"http://share.dmhy.org/topics/rss/rss.xml?keyword=";
 
-    private readonly Configuration _config;
+    private readonly Config _config;
     private readonly IBangumiDownloader _downloader;
     private readonly ILogger<BangumiManager> _logger;
     private readonly ConfigManager _configManager;
 
-    public BangumiManager(ILogger<BangumiManager> logger, Configuration configuration, IBangumiDownloader downloader, ConfigManager configManager)
+    public BangumiManager(ILogger<BangumiManager> logger, Config config, IBangumiDownloader downloader, ConfigManager configManager)
     {
         _logger = logger;
-        _config = configuration;
+        _config = config;
         _downloader = downloader;
         _configManager = configManager;
     }
@@ -92,4 +94,48 @@ public class BangumiManager
             _logger.LogDebug("{Ex}", e);
         }
     }
+}
+
+public class Config
+{
+    [JsonProperty("Bangumis")]
+    [JsonConverter(typeof(BangumiMapJsonConverter))]
+    public readonly IDictionary<string, Bangumi> Bangumis = new Dictionary<string, Bangumi>();
+    
+    [JsonIgnore]
+    public ICollection<Bangumi> BangumiList => Bangumis.Values;
+    
+}
+
+public class Bangumi
+{
+    [JsonProperty("Name", Required = Required.Always)]
+    public string Name { get; set; } = "";
+    
+    [JsonProperty("Regex", Required = Required.Always)]
+    public string Regex { get; set; } = "";
+
+    [JsonProperty("RegexGroupIndex", Required = Required.DisallowNull)]
+    public int RegexGroupIndex { get; set; } = 0;
+
+    [JsonProperty("QueryKeyWord", Required = Required.Always)]
+    public string QueryKeyWord { get; set; } = "";
+
+    [JsonProperty("DownloadedEps", Required = Required.DisallowNull)]
+    private HashSet<string> DownloadedEps { get; set; } = new();
+    
+    [JsonProperty("Finished", Required = Required.DisallowNull)]
+    public bool Finished { get; set; } = false;
+
+    public bool HadDownloaded(string link)
+    {
+        return string.IsNullOrWhiteSpace(link) || DownloadedEps.Contains(HashUtils.GetHashString(link));
+    }
+
+    public void AddDownloaded(string link)
+    {
+        if (string.IsNullOrWhiteSpace(link)) return;
+        DownloadedEps.Add(HashUtils.GetHashString(link));
+    }
+
 }

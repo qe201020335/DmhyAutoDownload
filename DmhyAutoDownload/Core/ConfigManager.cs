@@ -9,8 +9,8 @@ public class ConfigManager
     private const string ConfDir = @"./Config";
     private bool _initialized;
 
-    private Configuration? _config;
-    internal Configuration Config => _config ?? InitConfig();
+    private Config? _config;
+    internal Config Config => _config ?? InitConfig();
     private readonly ILogger<ConfigManager> _logger;
 
     public ConfigManager(ILogger<ConfigManager> logger)
@@ -18,7 +18,7 @@ public class ConfigManager
         _logger = logger;
     }
 
-    internal Configuration InitConfig()
+    internal Config InitConfig()
     {
         if (_initialized && _config != null) return _config;
         try
@@ -27,11 +27,11 @@ public class ConfigManager
             {
                 using var file = File.OpenText(ConfPath);
                 var serializer = new JsonSerializer();
-                _config = (Configuration?)serializer.Deserialize(file, typeof(Configuration)) ?? throw new Exception();
+                _config = (Config?)serializer.Deserialize(file, typeof(Config)) ?? throw new Exception();
             }
             else
             {
-                _config = new Configuration();
+                _config = new Config();
 
                 if (!Directory.Exists(ConfDir))
                 {
@@ -39,7 +39,6 @@ public class ConfigManager
                 }
             }
 
-            FetchEnvVar();
             SaveConfig();
             _initialized = true;
             return Config;
@@ -49,24 +48,6 @@ public class ConfigManager
             _logger.LogError("Cannot initialize configuration: {Message}", e.Message);
             _logger.LogDebug("{Ex}", e);
             throw;
-        }
-    }
-
-    internal void FetchEnvVar()
-    {
-        if (_config == null) return;
-        var addr = Environment.GetEnvironmentVariable("RPCADDR");
-        if (addr != null)
-        {
-            _logger.LogInformation("ENV | RPC Address: {Addr}", addr);
-            _config.AriaRpc = addr;
-        }
-
-        var token = Environment.GetEnvironmentVariable("ARIATOKEN");
-        if (token != null)
-        {
-            _logger.LogInformation("ENV | RPC Token: {Token}", token);
-            _config.AriaToken = token;
         }
     }
 

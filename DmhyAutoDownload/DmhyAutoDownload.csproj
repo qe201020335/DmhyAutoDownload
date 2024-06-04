@@ -23,6 +23,13 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DmhyAutoDownload.AriaRPC\DmhyAutoDownload.AriaRPC.csproj" />
+      <ProjectReference Include="..\DmhyAutoDownload.Extensions\DmhyAutoDownload.Extensions.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="appsettings.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
     </ItemGroup>
 
 </Project>

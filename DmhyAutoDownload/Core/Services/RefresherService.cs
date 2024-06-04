@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using DmhyAutoDownload.Core.Configuration;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload.Core.Services;
@@ -6,25 +7,25 @@ namespace DmhyAutoDownload.Core.Services;
 public class RefresherService : IHostedService, IDisposable
 {
     private readonly ILogger<RefresherService> _logger;
-    private readonly Configuration _config;
+    private readonly int _refreshDelaySeconds;
     private readonly BangumiManager _bangumiManager;
 
     private Timer? _timer;
     private Task? _refreshTask;
     private CancellationTokenSource? _tokenSource;
 
-    public RefresherService(ILogger<RefresherService> logger, Configuration configuration,
+    public RefresherService(ILogger<RefresherService> logger, AutoDownloadConfig config,
         BangumiManager bangumiManager)
     {
         _logger = logger;
-        _config = configuration;
+        _refreshDelaySeconds = config.RefreshDelaySeconds;
         _bangumiManager = bangumiManager;
     }
 
     public Task StartAsync(CancellationToken cancellationToken)
     {
-        _logger.LogInformation("RefresherService starting");
-        _timer = new Timer(Refresh, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(_config.RefreshDelay));
+        _logger.LogInformation("RefresherService starting, using refresh delay: {Delay} seconds", _refreshDelaySeconds);
+        _timer = new Timer(Refresh, null, TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(_refreshDelaySeconds));
         return Task.CompletedTask;
     }
 

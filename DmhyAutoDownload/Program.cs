@@ -1,5 +1,8 @@
-﻿using DmhyAutoDownload.Core.Extensions;
+﻿using DmhyAutoDownload.Core.Configuration;
+using DmhyAutoDownload.Core.Extensions;
+using DmhyAutoDownload.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -10,18 +13,23 @@ internal static class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+        // Register configuration sources
+        builder.RegisterAppConfiguration(args);
 
         // Add services to the container.
         var services = builder.Services;
-        services.AddControllers().AddNewtonsoftJson();
-        services.AddEndpointsApiExplorer();
-        services.AddSwaggerGen();
-
-        services.AddCoreDependencyGroup().RegisterCoreService();
+        services
+            .BindConfiguration<AutoDownloadConfig>(AutoDownloadConfig.Section)
+            .AddCoreDependencyGroup()
+            .RegisterCoreService()
+            .AddEndpointsApiExplorer()
+            .AddSwaggerGen()
+            .AddControllers()
+            .AddNewtonsoftJson();
         
-        var app = builder.Build().RegisterCoreAppEvents();
-
-        // Configure the HTTP request pipeline.
+        // Build the app
+        var app = builder.Build();
+        
         if (app.Environment.IsDevelopment())
         {
             Console.WriteLine("Development mode");
@@ -29,6 +37,9 @@ internal static class Program
             app.UseSwaggerUI();
         }
 
+        app.RegisterCoreAppEvents();
+        
+        // Configure the HTTP request pipeline.
         // app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();

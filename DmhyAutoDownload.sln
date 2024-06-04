@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload", "DmhyAut
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload.AriaRPC", "DmhyAutoDownload.AriaRPC\DmhyAutoDownload.AriaRPC.csproj", "{B4DAB007-4420-4736-B6E2-3779B70E3590}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DmhyAutoDownload.Extensions", "DmhyAutoDownload.Extensions\DmhyAutoDownload.Extensions.csproj", "{4498E197-2FCC-4A99-9AB1-EDC8FD948419}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B4DAB007-4420-4736-B6E2-3779B70E3590}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4498E197-2FCC-4A99-9AB1-EDC8FD948419}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4498E197-2FCC-4A99-9AB1-EDC8FD948419}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4498E197-2FCC-4A99-9AB1-EDC8FD948419}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4498E197-2FCC-4A99-9AB1-EDC8FD948419}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

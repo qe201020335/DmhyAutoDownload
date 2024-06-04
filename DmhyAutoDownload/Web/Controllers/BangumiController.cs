@@ -10,7 +10,7 @@ namespace DmhyAutoDownload.Web.Controllers;
 public class BangumiController : ControllerBase
 {
     private readonly ILogger<BangumiController> _logger;
-    private readonly Configuration _config;
+    private readonly Config _config;
     private readonly ConfigManager _configManager;
 
     public BangumiController(ILogger<BangumiController> logger, ConfigManager configManager)

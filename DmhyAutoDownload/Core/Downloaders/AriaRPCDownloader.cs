@@ -1,4 +1,5 @@
 ﻿using DmhyAutoDownload.AriaRPC;
+using DmhyAutoDownload.Core.Configuration;
 using DmhyAutoDownload.Core.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -13,11 +14,11 @@ public class AriaRPCDownloader: IBangumiDownloader, IDisposable
     private readonly ILogger<AriaRPCDownloader> _logger;
     
     
-    public AriaRPCDownloader(Configuration config, ILogger<AriaRPCDownloader> logger)
+    public AriaRPCDownloader(AutoDownloadConfig config, ILogger<AriaRPCDownloader> logger)
     {
         _logger = logger;
-        _logger.LogInformation("Initializing AriaRPCDownloader");
-        _rpc = Aria2Rpc.Create(config.AriaRpc, config.AriaToken);
+        _logger.LogInformation("Initializing AriaRPCDownloader with Aria2 RPC Addr: {Addr}", config.AriaWsRpcAddr);
+        _rpc = Aria2Rpc.Create(config.AriaWsRpcAddr, config.AriaSecretToken);
     }
 
     public void Dispose()
