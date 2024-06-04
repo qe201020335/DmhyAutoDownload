@@ -59,7 +59,15 @@ public class Aria2Rpc: IDisposable
     {
         Console.WriteLine("Initializing Aria2 RPC...");
         Console.WriteLine("Connecting to web socket...");
-        var socket = new ClientWebSocket();
+        var socket = new ClientWebSocket
+        {
+            Options =
+            {
+                // disable the pong messages which would cause invalid requests
+                // and cause the connection to be dropped
+                KeepAliveInterval = Timeout.InfiniteTimeSpan  
+            }
+        };
         
         await socket.ConnectAsync(new Uri(_address), cancellationToken);
         Console.WriteLine("Connected to web socket. Establishing JSON-RPC protocol...");
