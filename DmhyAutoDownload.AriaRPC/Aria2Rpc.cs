@@ -1,8 +1,6 @@
 ﻿using System.Net.WebSockets;
 using DmhyAutoDownload.AriaRPC.Models.Results;
-using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.Threading;
-using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
 namespace DmhyAutoDownload.AriaRPC;
@@ -12,11 +10,7 @@ public class Aria2Rpc: IDisposable
     private readonly string _address;
     private readonly string _token;
     
-    private readonly Mutex _mutex = new();
-    
     private JsonRpc? _rpc;
-    private IAria2Server _server;
-    private IAria2System _system;
     
     #region Setup and Teardown
     private Aria2Rpc(string address, string token)
@@ -50,8 +44,6 @@ public class Aria2Rpc: IDisposable
         finally
         {
             _rpc = null;
-            _server = null!;
-            _system = null!;
         }
     }
 
@@ -74,22 +66,13 @@ public class Aria2Rpc: IDisposable
 
         var rpc = new JsonRpc(new WebSocketMessageHandler(socket));
         
-        _server = rpc.Attach<IAria2Server>(new JsonRpcProxyOptions
-        {
-            MethodNameTransform = AriaMethodNameTransforms.ScopedMethod("aria2"),
-            EventNameTransform = AriaMethodNameTransforms.ScopedMethod("aria2")
-        });
-        _system = rpc.Attach<IAria2System>(new JsonRpcProxyOptions
-        {
-            MethodNameTransform = AriaMethodNameTransforms.ScopedMethod("system"),
-            EventNameTransform = AriaMethodNameTransforms.ScopedMethod("system")
-        });
+        
         rpc.StartListening();
         
         rpc.Disconnected += OnRpcDisconnected;
         
         _rpc = rpc;
-        var version = (await _server.GetVersionAsync($"token:{_token}")).version;
+        var version = (await GetVersionAsync()).version;
         Console.WriteLine($"RPC initialized. Aric2 version: {version}");
     }
     
@@ -154,16 +137,33 @@ public class Aria2Rpc: IDisposable
     #endregion
     
     #region RPC Methods
+    
+    private async Task<T> CallNoLogAsync<T>(string method, params object[] args)
+    {
+        return await _rpc!.InvokeAsync<T>(method, args);
+    }
+    
+    private async Task<T> CallAsync<T>(string method, params object[] args)
+    {
+        Console.WriteLine($"Calling RPC method: {method} with args: {string.Join(", ", args)}");
+        return await CallNoLogAsync<T>(method, args);
+    }
+    
+    private async Task<T> CallProtectedAsync<T>(string method, params object[] args)
+    {
+        Console.WriteLine($"Calling protected RPC method: {method} with args: {string.Join(", ", args)}");
+        return await CallNoLogAsync<T>(method, [$"token:{_token}", .. args]);
+    }
 
     public async Task<GetVersionResult> GetVersionAsync()
     {
-        return await _server.GetVersionAsync($"token:{_token}");
+        return await CallProtectedAsync<GetVersionResult>("aria2.getVersion");
     }
     
     public async Task<string> AddUriAsync(string uri, params string[] mirrors)
     {
         var uris = mirrors.Prepend(uri).ToArray();
-        return await _server.AddUriAsync($"token:{_token}", uris);
+        return await CallProtectedAsync<string>("aria2.addUri", [uris]);
     }
     
     #endregion
