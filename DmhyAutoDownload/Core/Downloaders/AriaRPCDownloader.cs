@@ -12,12 +12,12 @@ public class AriaRPCDownloader: IBangumiDownloader, IDisposable
     
     private readonly ILogger<AriaRPCDownloader> _logger;
     
-    private readonly Configuration _config;
     
     public AriaRPCDownloader(Configuration config, ILogger<AriaRPCDownloader> logger)
     {
-        _config = config;
         _logger = logger;
+        _logger.LogInformation("Initializing AriaRPCDownloader");
+        _rpc = Aria2Rpc.Create(config.AriaRpc, config.AriaToken);
     }
 
     public void Dispose()
@@ -26,21 +26,15 @@ public class AriaRPCDownloader: IBangumiDownloader, IDisposable
         GC.SuppressFinalize(this);
     }
 
-    public async Task InitializeAsync()
-    {
-        _logger.LogInformation("Initializing AriaRPCDownloader");
-        _rpc = await Aria2Rpc.CreateAsync(_config.AriaRpc, _config.AriaToken);
-        _logger.LogInformation("AriaRPCDownloader initialized - {Info}", await GetInfo());
-    }
-
     public async Task DownloadAsync(string uri)
     {
         var res = await _rpc.AddUriAsync(uri);
         _logger.LogInformation("Added download task, res: {Code}", res);
     }
     
-    public async Task<string> GetInfo()
+    public async Task<string> GetInfoAsync()
     {
+        _logger.LogInformation("Getting Info from Aria2 RPC");
         var version = await _rpc.GetVersionAsync();
         return $"Aria2 ({version.version}) with features: {string.Join(", ", version.enabledFeatures)}";
     }

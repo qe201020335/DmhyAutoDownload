@@ -25,7 +25,7 @@ public static class CoreServiceCollectionExtensions
     {
         services
             .AddHostedService<RefresherService>()
-            .AddHostedService<DownloaderInitializer>();
+            .AddHostedService<DownloaderInfoCheck>();
         
         return services;
     }

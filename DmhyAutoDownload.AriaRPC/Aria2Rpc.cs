@@ -1,6 +1,7 @@
 ﻿using System.Net.WebSockets;
 using DmhyAutoDownload.AriaRPC.Models.Results;
 using Microsoft.Extensions.Logging;
+using Microsoft.VisualStudio.Threading;
 using Newtonsoft.Json.Linq;
 using StreamJsonRpc;
 
@@ -75,6 +76,13 @@ public class Aria2Rpc: IDisposable
     {
         var rpc = new Aria2Rpc(address, token);
         await rpc.InitAsync();
+        return rpc;
+    }
+    
+    public static Aria2Rpc Create(string address, string token)
+    {
+        var rpc = new Aria2Rpc(address, token);
+        new JoinableTaskFactory(new JoinableTaskContext()).Run(() => rpc.InitAsync());
         return rpc;
     }
     #endregion
