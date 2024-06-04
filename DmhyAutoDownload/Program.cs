@@ -2,6 +2,7 @@
 using DmhyAutoDownload.Core.Extensions;
 using DmhyAutoDownload.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Rewrite;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -35,6 +36,9 @@ internal static class Program
             Console.WriteLine("Development mode");
             app.UseSwagger();
             app.UseSwaggerUI();
+            var option = new RewriteOptions();
+            option.AddRedirect("^index\\.html$", "swagger");
+            app.UseRewriter(option);
         }
 
         app.RegisterCoreAppEvents();
