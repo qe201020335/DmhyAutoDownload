@@ -21,8 +21,13 @@ public class BangumiController : ControllerBase
     }
 
     [HttpGet("all/")]
-    public async Task<ICollection<Bangumi>> GetAllBangumisAsync()
+    public async Task<ICollection<Bangumi>> GetAllBangumisAsync([FromQuery(Name = "finished")] bool? finished = null)
     {
+        if (finished.HasValue)
+        {
+            return await _bangumiRepository.GetBangumisAsync(finished.Value);
+        }
+        
         return await _bangumiRepository.GetAllBangumisAsync();
     }
 
