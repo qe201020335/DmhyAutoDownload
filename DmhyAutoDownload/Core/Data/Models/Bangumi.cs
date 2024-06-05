@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using DmhyAutoDownload.Core.Data.Attributes;
 using DmhyAutoDownload.Core.Utils;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -6,14 +7,12 @@ using Newtonsoft.Json;
 namespace DmhyAutoDownload.Core.Data.Models;
 
 [JsonObject(MemberSerialization.OptIn)]
-[Index(nameof(Name), IsUnique = true)]
 [Index(nameof(Finished))]
+[PrimaryKey(nameof(Name))]
 public class Bangumi
 {
-    public string BangumiId { get; set; } // the primary key
-    
     [JsonProperty("Name", Required = Required.Always)]
-    public string Name { get; set; } = "";
+    public string Name { get; set; } = ""; // the primary key
     
     [JsonProperty("Regex", Required = Required.Always)]
     public string Regex { get; set; } = "";
@@ -25,7 +24,10 @@ public class Bangumi
     public string QueryKeyWord { get; set; } = "";
 
     [JsonProperty("DownloadedEps", Required = Required.DisallowNull)]
-    private HashSet<string> DownloadedEps { get; set; } = new();
+    [Mapped]
+    private List<string> DownloadedEps { get; } = [];  // a hashset would be better but EF Core was throwing exceptions
+    
+    private HashSet<int> _aaa = [1, 2, 3, 5];
     
     [JsonProperty("Finished", Required = Required.DisallowNull)]
     public bool Finished { get; set; } = false;
@@ -38,7 +40,11 @@ public class Bangumi
     public void AddDownloaded(string link)
     {
         if (string.IsNullOrWhiteSpace(link)) return;
-        DownloadedEps.Add(HashUtils.GetHashString(link));
+        var hash = HashUtils.GetHashString(link);
+        if (!DownloadedEps.Contains(hash))
+        {
+            DownloadedEps.Add(hash);
+        }
     }
 
 }

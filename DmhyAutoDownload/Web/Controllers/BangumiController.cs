@@ -12,15 +12,11 @@ namespace DmhyAutoDownload.Web.Controllers;
 public class BangumiController : ControllerBase
 {
     private readonly ILogger<BangumiController> _logger;
-    private readonly Config _config;
-    private readonly ConfigManager _configManager;
     private readonly IBangumiRepository _bangumiRepository;
 
-    public BangumiController(ILogger<BangumiController> logger, ConfigManager configManager, IBangumiRepository bangumiRepository)
+    public BangumiController(ILogger<BangumiController> logger, IBangumiRepository bangumiRepository)
     {
         _logger = logger;
-        _configManager = configManager;
-        _config = configManager.Config;
         _bangumiRepository = bangumiRepository;
     }
 
@@ -31,25 +27,26 @@ public class BangumiController : ControllerBase
     }
 
     [HttpGet("get/{name}/")]
-    public IActionResult GetBangumi(string name)
+    public async Task<IActionResult> GetBangumiAsync(string name)
     {
-        if (_config.Bangumis.TryGetValue(name, out var bangumi))
+        var bangumi = await _bangumiRepository.GetBangumiAsync(name);
+        if (bangumi != null)
         {
             return new JsonResult(bangumi);
         }
         return NotFound();
     }
 
-    [HttpPost("add/")]
-    public IActionResult AddBangumi([FromServices] RefresherService refresherService, Bangumi bangumi)
+    [HttpPut("add/")]
+    public async Task<IActionResult> AddBangumiAsync([FromServices] RefresherService refresherService, Bangumi bangumi)
     {
-        if (_config.Bangumis.ContainsKey(bangumi.Name))
+        if (!await _bangumiRepository.TryAddBangumiAsync(bangumi))
         {
             return BadRequest();
         }
-        _config.Bangumis[bangumi.Name] = bangumi;
+        
         refresherService.Refresh(null);
-        return Accepted();
+        return Created();
     }
 
     [HttpPost("refresh/")]
@@ -59,26 +56,25 @@ public class BangumiController : ControllerBase
     }
     
     [HttpPost("markFinished/{name}/")]
-    public IActionResult MarkFinished(string name, [FromQuery(Name = "finished")] bool finished = true)
+    public async Task<IActionResult> MarkFinishedAsync(string name, [FromQuery(Name = "finished")] bool finished = true)
     {
-        if (_config.Bangumis.TryGetValue(name, out var bangumi))
+        if (await _bangumiRepository.TryMarkAsFinishedAsync(name, finished))
         {
-            bangumi.Finished = finished;
-            _configManager.SaveConfig();
-            return new JsonResult(bangumi);
+            var bangumi = await _bangumiRepository.GetBangumiAsync(name);
+            return new JsonResult(bangumi!);
         }
+        
         return NotFound();
     }
     
     [HttpDelete("delete/{name}/")]
-    public IActionResult DeleteBangumi(string name)
+    public async Task<IActionResult> DeleteBangumiAsync(string name)
     {
-        if (_config.Bangumis.ContainsKey(name))
+        if (await _bangumiRepository.TryDeleteBangumiAsync(name))
         {
-            _config.Bangumis.Remove(name);
-            _configManager.SaveConfig();
             return NoContent();
         }
+        
         return NotFound();
     }
 }
