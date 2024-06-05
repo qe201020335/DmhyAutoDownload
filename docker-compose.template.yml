@@ -5,7 +5,8 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     volumes:
-      - ./Config:/app/Config
+      - ./Data:/app/Data
+      - ./appsettings.override.json:/app/appsettings.Production.json
     ports:
       - "18880:8888"
     restart: unless-stopped
