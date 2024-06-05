@@ -1,10 +1,8 @@
 ﻿using DmhyAutoDownload.Core.Configuration;
-using DmhyAutoDownload.Core.Data;
 using DmhyAutoDownload.Core.Extensions;
 using DmhyAutoDownload.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -29,10 +27,10 @@ internal static class Program
             .AddSwaggerGen()
             .AddControllers()
             .AddNewtonsoftJson();
-        
+
         // Build the app
         var app = builder.Build();
-        
+
         if (app.Environment.IsDevelopment())
         {
             Console.WriteLine("Development mode");
@@ -49,13 +47,12 @@ internal static class Program
         // app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
-        
-        // Do data migration
-        using (var serviceScope = app.Services.CreateScope())
-        {
-            await using var dbContext = serviceScope.ServiceProvider.GetRequiredService<CoreDbContext>();
-            await dbContext.Database.MigrateAsync();
-        }
+
+        // Do database migration
+        await app.MigrateDatabase();
+
+        // Add old data
+        await app.ImportOldData();
         
         await app.RunAsync();
     }
