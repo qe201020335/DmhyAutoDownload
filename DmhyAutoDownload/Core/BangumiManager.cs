@@ -4,6 +4,7 @@ using System.Xml;
 using DmhyAutoDownload.Core.Data.Models;
 using DmhyAutoDownload.Core.Interfaces;
 using DmhyAutoDownload.Core.Utils;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
@@ -13,33 +14,61 @@ public class BangumiManager
 {
     const string QUERY_URL = @"http://share.dmhy.org/topics/rss/rss.xml?keyword=";
 
-    private readonly Config _config;
+    private readonly IServiceProvider _services;
     private readonly IBangumiDownloader _downloader;
     private readonly ILogger<BangumiManager> _logger;
-    private readonly ConfigManager _configManager;
+    
+    private CancellationTokenSource _refreshCts = new();
 
-    public BangumiManager(ILogger<BangumiManager> logger, Config config, IBangumiDownloader downloader, ConfigManager configManager)
+    public BangumiManager(ILogger<BangumiManager> logger, IBangumiDownloader downloader, IServiceProvider services)
     {
         _logger = logger;
-        _config = config;
         _downloader = downloader;
-        _configManager = configManager;
+        _services = services;
     }
-
-    internal async Task RefreshAndPush(bool skipFinished = true)
+    
+    public void TriggerRefresh()
     {
-        foreach (var bangumi in _config.BangumiList)
+        _refreshCts.Cancel();
+        var newCts = new CancellationTokenSource();
+        _refreshCts = newCts;
+        var newToken = newCts.Token;
+        try
         {
-            if (!skipFinished || !bangumi.Finished)
+            _ = Task.Run(async () =>
             {
-                await RefreshAndPush(bangumi);
-            }
+                await RefreshAllAsync(newToken);
+            }, newToken);
         }
-
-        _configManager.SaveConfig();
+        catch (Exception e)
+        {
+            _logger.LogCritical("Failed to start refresh: {Ex}", e);
+        }
     }
 
-    internal async Task RefreshAndPush(Bangumi bangumi)
+    private async Task RefreshAllAsync(CancellationToken token)
+    {
+        _logger.LogInformation("Refreshing all unfinished bangumis");
+        using var scope = _services.CreateScope();
+        var repo = scope.ServiceProvider.GetRequiredService<IBangumiRepository>();
+        var unfinished = await repo.GetBangumisAsync(false);
+        
+        if (unfinished.Count == 0)
+        {
+            _logger.LogInformation("No unfinished bangumi found");
+            return;
+        }
+        
+        if (token.IsCancellationRequested) return;
+        foreach (var bangumi in unfinished)
+        { 
+            if (token.IsCancellationRequested) return;
+            await RefreshAsync(bangumi, token);
+            await repo.TryUpdateBangumiAsync(bangumi);
+        }
+    }
+    
+    private async Task RefreshAsync(Bangumi bangumi, CancellationToken token)
     {
         _logger.LogDebug("{Name}, query: {QueryKeyWord}, regex: {Regex}", bangumi.Name, bangumi.QueryKeyWord,
             bangumi.Regex);
@@ -56,11 +85,14 @@ public class BangumiManager
             _logger.LogDebug("{Ex}", e);
             return;
         }
+        
+        if (token.IsCancellationRequested) return;
 
         foreach (var item in feed.Items)
         {
             _logger.LogDebug("{Title}", item.Title.Text);
             var match = regex.Match(item.Title.Text);
+            if (token.IsCancellationRequested) return;
             _logger.LogDebug("{Match}", match.Success);
             if (match.Success)
             {
@@ -74,13 +106,15 @@ public class BangumiManager
                 {
                     _logger.LogInformation("{Id} {Title}: {Magnetic}", match.Groups[bangumi.RegexGroupIndex + 1],
                         item.Title.Text, magnet.AbsoluteUri.Substring(0, 50) + "...");
-                    await Push(bangumi, magnet);
+                    await DownloadEpAsync(bangumi, magnet);
                 }
             }
+
+            if (token.IsCancellationRequested) return;
         }
     }
 
-    private async Task Push(Bangumi bangumi, Uri magnet)
+    private async Task DownloadEpAsync(Bangumi bangumi, Uri magnet)
     {
         if (bangumi.HadDownloaded(magnet.AbsoluteUri)) return;
 
@@ -95,15 +129,4 @@ public class BangumiManager
             _logger.LogDebug("{Ex}", e);
         }
     }
-}
-
-public class Config
-{
-    [JsonProperty("Bangumis")]
-    [JsonConverter(typeof(BangumiMapJsonConverter))]
-    public readonly IDictionary<string, Bangumi> Bangumis = new Dictionary<string, Bangumi>();
-    
-    [JsonIgnore]
-    public ICollection<Bangumi> BangumiList => Bangumis.Values;
-    
 }

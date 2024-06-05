@@ -41,8 +41,6 @@ internal static class Program
             app.UseRewriter(option);
         }
 
-        app.RegisterCoreAppEvents();
-        
         // Configure the HTTP request pipeline.
         // app.UseHttpsRedirection();
         app.UseAuthorization();

@@ -43,21 +43,21 @@ public class BangumiController : ControllerBase
     }
 
     [HttpPut("add/")]
-    public async Task<IActionResult> AddBangumiAsync([FromServices] RefresherService refresherService, Bangumi bangumi)
+    public async Task<IActionResult> AddBangumiAsync([FromServices] BangumiManager bangumiManager, Bangumi bangumi)
     {
         if (!await _bangumiRepository.TryAddBangumiAsync(bangumi))
         {
             return BadRequest();
         }
         
-        refresherService.Refresh(null);
+        bangumiManager.TriggerRefresh();
         return Created();
     }
 
     [HttpPost("refresh/")]
-    public void Refresh([FromServices] RefresherService refresherService)
+    public void Refresh([FromServices] BangumiManager bangumiManager)
     {
-        refresherService.Refresh(null);
+        bangumiManager.TriggerRefresh();
     }
     
     [HttpPost("markFinished/{name}/")]

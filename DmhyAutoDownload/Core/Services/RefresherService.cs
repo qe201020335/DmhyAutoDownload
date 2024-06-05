@@ -31,24 +31,8 @@ public class RefresherService : IHostedService, IDisposable
 
     internal void Refresh(object? state)
     {
-        try
-        {
-            _refreshTask?.Wait(5000);
-            _tokenSource?.Cancel();
-            _refreshTask?.Dispose();
-        }
-        catch (Exception e)
-        {
-            if (e is not AggregateException && e is not ObjectDisposedException)
-            {
-                _logger.LogWarning("Failed to clean up previous refresh attempt: {Message}", e.Message);
-                _logger.LogDebug("{Ex}", e);
-            }
-        }
-
-        _logger.LogInformation("RefresherService begin refresh");
-        _tokenSource = new CancellationTokenSource();
-        _refreshTask = Task.Factory.StartNew(() => { _bangumiManager.RefreshAndPush().Wait(_tokenSource.Token); });
+        _logger.LogInformation("RefresherService triggering refresh");
+        _bangumiManager.TriggerRefresh();
     }
 
     public Task StopAsync(CancellationToken stoppingToken)
