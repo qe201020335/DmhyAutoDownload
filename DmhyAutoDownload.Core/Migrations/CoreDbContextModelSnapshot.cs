@@ -2,19 +2,16 @@
 using DmhyAutoDownload.Core.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace DmhyAutoDownload.Migrations
+namespace DmhyAutoDownload.Core.Migrations
 {
     [DbContext(typeof(CoreDbContext))]
-    [Migration("20240605072546_CreateDb")]
-    partial class CreateDb
+    partial class CoreDbContextModelSnapshot : ModelSnapshot
     {
-        /// <inheritdoc />
-        protected override void BuildTargetModel(ModelBuilder modelBuilder)
+        protected override void BuildModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");

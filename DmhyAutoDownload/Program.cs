@@ -1,5 +1,4 @@
-﻿using DmhyAutoDownload.Core.Configuration;
-using DmhyAutoDownload.Core.Extensions;
+﻿using DmhyAutoDownload.Core.Extensions;
 using DmhyAutoDownload.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Rewrite;
@@ -13,16 +12,14 @@ internal static class Program
     public static async Task Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        // Register configuration sources
-        builder.RegisterAppConfiguration(args);
+       
+        builder
+            .RegisterAppConfiguration(args)  // Register configuration sources
+            .UseAutoDownloadCore(); 
 
         // Add services to the container.
         var services = builder.Services;
         services
-            .BindConfiguration<AutoDownloadConfig>(AutoDownloadConfig.Section)
-            .ConfigureCoreData()
-            .AddCoreDependencyGroup()
-            .RegisterCoreService()
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
             .AddControllers()
@@ -46,11 +43,7 @@ internal static class Program
         app.UseAuthorization();
         app.MapControllers();
 
-        // Do database migration
-        await app.MigrateDatabase();
-
-        // Add old data
-        await app.ImportOldData();
+        await app.DoCorePreRunChoresAsync();
         
         await app.RunAsync();
     }

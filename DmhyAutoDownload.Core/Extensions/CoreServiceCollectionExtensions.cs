@@ -3,7 +3,7 @@ using DmhyAutoDownload.Core.Data;
 using DmhyAutoDownload.Core.Downloaders;
 using DmhyAutoDownload.Core.Interfaces;
 using DmhyAutoDownload.Core.Services;
-using Microsoft.AspNetCore.Builder;
+using DmhyAutoDownload.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,7 +11,18 @@ namespace DmhyAutoDownload.Core.Extensions;
 
 public static class CoreServiceCollectionExtensions
 {
-    public static IServiceCollection ConfigureCoreData(this IServiceCollection services)
+    internal static IServiceCollection UseAutoDownloadCoreService(this IServiceCollection services)
+    {
+        services
+            .BindConfiguration<AutoDownloadConfig>(AutoDownloadConfig.Section)
+            .ConfigureCoreData()
+            .AddCoreDependencyGroup()
+            .RegisterCoreService();
+
+        return services;
+    }
+    
+    private static IServiceCollection ConfigureCoreData(this IServiceCollection services)
     {
         var path = services.BuildServiceProvider().GetRequiredService<AutoDownloadConfig>().SqliteDbPath;
         services.AddDbContext<CoreDbContext>(
@@ -19,7 +30,7 @@ public static class CoreServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection AddCoreDependencyGroup(this IServiceCollection services)
+    private static IServiceCollection AddCoreDependencyGroup(this IServiceCollection services)
     {
         services
             .AddSingleton<IBangumiDownloader, AriaRPCDownloader>()
@@ -29,7 +40,7 @@ public static class CoreServiceCollectionExtensions
         return services;
     }
 
-    public static IServiceCollection RegisterCoreService(this IServiceCollection services)
+    private static IServiceCollection RegisterCoreService(this IServiceCollection services)
     {
         services
             .AddHostedService<RefresherService>()

@@ -2,7 +2,7 @@
 
 #nullable disable
 
-namespace DmhyAutoDownload.Migrations
+namespace DmhyAutoDownload.Core.Migrations
 {
     /// <inheritdoc />
     public partial class CreateDb : Migration

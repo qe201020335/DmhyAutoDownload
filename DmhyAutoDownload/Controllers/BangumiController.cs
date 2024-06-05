@@ -1,11 +1,10 @@
 using DmhyAutoDownload.Core;
 using DmhyAutoDownload.Core.Data.Models;
 using DmhyAutoDownload.Core.Interfaces;
-using DmhyAutoDownload.Core.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace DmhyAutoDownload.Web.Controllers;
+namespace DmhyAutoDownload.Controllers;
 
 [ApiController]
 [Route("bangumi")]

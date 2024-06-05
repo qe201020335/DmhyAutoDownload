@@ -1,16 +1,22 @@
 ﻿using DmhyAutoDownload.Core.Data;
 using DmhyAutoDownload.Core.Data.Models;
 using DmhyAutoDownload.Core.Interfaces;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Newtonsoft.Json.Linq;
 
 namespace DmhyAutoDownload.Core.Extensions;
 
-public static class WebApplicationExtensions
+public static class HostAppExtensions
 {
-    public static async Task MigrateDatabase(this WebApplication app)
+    public static async Task DoCorePreRunChoresAsync(this IHost app)
+    {
+        await app.MigrateDatabaseAsync();
+        await app.ImportOldDataAsync();
+    }
+    
+    private static async Task MigrateDatabaseAsync(this IHost app)
     {
         Console.WriteLine("Migrating database");
         using var serviceScope = app.Services.CreateScope();
@@ -19,7 +25,7 @@ public static class WebApplicationExtensions
         Console.WriteLine("Database migrated");
     }
     
-    public static async Task ImportOldData(this WebApplication app)
+    private static async Task ImportOldDataAsync(this IHost app)
     {
         Console.WriteLine("Importing old data");
         using var serviceScope = app.Services.CreateScope();
