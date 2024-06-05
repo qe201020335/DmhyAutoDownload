@@ -1,21 +1,22 @@
 ﻿using DmhyAutoDownload.Core.Configuration;
+using DmhyAutoDownload.Core.Interfaces;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload.Core.Services;
 
-public class RefresherService : IHostedService, IDisposable
+internal class RefresherService : IHostedService, IDisposable
 {
     private readonly ILogger<RefresherService> _logger;
     private readonly int _refreshDelaySeconds;
-    private readonly BangumiManager _bangumiManager;
+    private readonly IBangumiManager _bangumiManager;
 
     private Timer? _timer;
     private Task? _refreshTask;
     private CancellationTokenSource? _tokenSource;
 
     public RefresherService(ILogger<RefresherService> logger, AutoDownloadConfig config,
-        BangumiManager bangumiManager)
+        IBangumiManager bangumiManager)
     {
         _logger = logger;
         _refreshDelaySeconds = config.RefreshDelaySeconds;

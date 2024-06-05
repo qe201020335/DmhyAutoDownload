@@ -1,7 +1,7 @@
 ﻿namespace DmhyAutoDownload.Core.Data.Attributes;
 
 [AttributeUsage(AttributeTargets.Property)]
-public class MappedAttribute: Attribute
+internal class MappedAttribute: Attribute
 {
     public bool IsRequired { get; set; } = true;
 }

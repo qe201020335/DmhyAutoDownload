@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace DmhyAutoDownload.Core;
 
-public class BangumiManager
+internal class BangumiManager: IBangumiManager
 {
     const string QUERY_URL = @"http://share.dmhy.org/topics/rss/rss.xml?keyword=";
 

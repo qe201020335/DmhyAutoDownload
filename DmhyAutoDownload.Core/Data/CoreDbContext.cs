@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DmhyAutoDownload.Core.Data;
 
-public class CoreDbContext: DbContext
+internal class CoreDbContext: DbContext
 {
     public CoreDbContext(DbContextOptions options) : base(options) { }
 

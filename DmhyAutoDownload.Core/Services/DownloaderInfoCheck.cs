@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload.Core.Services;
 
-public class DownloaderInfoCheck: IHostedService
+internal class DownloaderInfoCheck: IHostedService
 {
     private readonly IBangumiDownloader _downloader;
 

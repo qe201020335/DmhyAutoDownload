@@ -35,7 +35,7 @@ public static class CoreServiceCollectionExtensions
         services
             .AddSingleton<IBangumiDownloader, AriaRPCDownloader>()
             .AddScoped<IBangumiRepository, BangumiRepository>()
-            .AddSingleton<BangumiManager, BangumiManager>();
+            .AddSingleton<IBangumiManager, BangumiManager>();
 
         return services;
     }

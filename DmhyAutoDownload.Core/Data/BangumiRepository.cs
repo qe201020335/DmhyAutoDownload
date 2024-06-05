@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace DmhyAutoDownload.Core.Data;
 
-public class BangumiRepository: IBangumiRepository
+internal class BangumiRepository: IBangumiRepository
 {
     private readonly ILogger<BangumiRepository> _logger;
     

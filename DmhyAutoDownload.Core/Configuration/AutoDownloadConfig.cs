@@ -1,6 +1,6 @@
 ﻿namespace DmhyAutoDownload.Core.Configuration;
 
-public class AutoDownloadConfig
+internal class AutoDownloadConfig
 {
     internal const string Section = "AutoDownload";
     

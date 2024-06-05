@@ -1,6 +1,6 @@
 ﻿namespace DmhyAutoDownload.Core.Interfaces;
 
-public interface IBangumiDownloader
+internal interface IBangumiDownloader
 {
     Task DownloadAsync(string uri);
 

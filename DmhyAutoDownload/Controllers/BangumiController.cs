@@ -1,4 +1,3 @@
-using DmhyAutoDownload.Core;
 using DmhyAutoDownload.Core.Data.Models;
 using DmhyAutoDownload.Core.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -42,7 +41,7 @@ public class BangumiController : ControllerBase
     }
 
     [HttpPut("add/")]
-    public async Task<IActionResult> AddBangumiAsync([FromServices] BangumiManager bangumiManager, Bangumi bangumi)
+    public async Task<IActionResult> AddBangumiAsync([FromServices] IBangumiManager bangumiManager, Bangumi bangumi)
     {
         if (!await _bangumiRepository.TryAddBangumiAsync(bangumi))
         {
@@ -54,7 +53,7 @@ public class BangumiController : ControllerBase
     }
 
     [HttpPost("refresh/")]
-    public void Refresh([FromServices] BangumiManager bangumiManager)
+    public void Refresh([FromServices] IBangumiManager bangumiManager)
     {
         bangumiManager.TriggerRefresh();
     }

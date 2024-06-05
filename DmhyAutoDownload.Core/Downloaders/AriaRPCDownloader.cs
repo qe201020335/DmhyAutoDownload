@@ -7,7 +7,7 @@ using Microsoft.VisualStudio.Threading;
 
 namespace DmhyAutoDownload.Core.Downloaders;
 
-public class AriaRPCDownloader: IBangumiDownloader, IDisposable
+internal class AriaRPCDownloader: IBangumiDownloader, IDisposable
 {
     private Aria2Rpc _rpc = null!;
     
