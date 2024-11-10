@@ -1,5 +1,5 @@
 # DmhyAutoDownload
-An anime content subcriptor and automatic downloader for [dmhy](https://u2.dmhy.org/). Supports sending downloads via AricRPC.
+An anime content subcriptor and automatic downloader for [dmhy](https://www.dmhy.org/). Supports sending downloads via AriaRPC.
 
 ## Documentation
 
@@ -15,7 +15,7 @@ Currently, a front-end is not available but a swagger ui can be found at `/index
 ### Packages
 | Name | Description |
 |---|---|
-| `DmhyAutoDownload.AriaRPC` |  A custom AricRPC client implemented using [.NET StreamJsonRpc](https://github.com/microsoft/vs-streamjsonrpc) |
+| `DmhyAutoDownload.AriaRPC` |  A custom AriaRPC client implemented using [.NET StreamJsonRpc](https://github.com/microsoft/vs-streamjsonrpc) |
 | `DmhyAutoDownload.Core` | The core logic of the project |
 | `DmhyAutoDownload.Extensions` | Shared extension methods |
 | `DmhyAutoDownload` | Program entry point |
